@@ -1,0 +1,37 @@
+#include "../include/i8batchgle.spl" 
+#include "../include/i8secabt.spl"
+
+procedure main 
+
+local field 
+lf-wo like gl-tr-document-no
+lf-batch like gl-batch-ref
+
+parameter are 
+		lp-work-order 	LIKE work-order
+
+
+get system-control first
+on error
+abort "No system control record. System not initialised"
+endon
+
+set lf-wo = right-justify(lp-work-order,sizeof(gl-tr-document-no))
+       
+select * from gl-trans
+where gl-tr-document-no = lf-wo 
+and gl-tr-document-type = 'WO'
+and gltr-special-account-name like 'MANVAR%'
+detail
+
+set lf-batch = gl-batch-ref
+set gl-batch-ref = lf-batch
+
+do i8secabt-check-abort parameters
+sys-consolidation-division login-id() "GL" "E009"
+do i8batchgle-enquire-on-gl-batch
+ 
+
+break
+endselect 
+endprocedure 
