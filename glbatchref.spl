@@ -7,6 +7,8 @@ local field
 lf-wo like gl-tr-document-no
 lf-batch like gl-batch-ref
 
+//oka testing push github
+
 parameter are 
 		lp-work-order 	LIKE work-order
 
